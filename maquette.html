@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YOONU MAKK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+body {
+  background: #0f0a1e;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  padding: 24px 16px 48px;
+}
+
+/* ── Nav ── */
+.suite { color: #6b21a8; font-size: 11px; font-weight: 700; letter-spacing: 2px; margin-bottom: 18px; text-transform: uppercase; }
+.nav { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 28px; justify-content: center; max-width: 700px; }
+.n { padding: 5px 14px; border-radius: 30px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1.5px solid #2d1459; color: #a78bfa; background: transparent; transition: all .2s; letter-spacing: .3px; }
+.n:hover { background: #2d1459; }
+.n.on { background: #7c3aed; color: #fff; border-color: #7c3aed; }
+.sep { color: #2d1459; font-size: 11px; display: flex; align-items: center; padding: 0 2px; }
+
+/* ── Téléphone ── */
+.phone {
+  width: 390px;
+  height: 844px;
+  background: #f7f4f0;
+  border-radius: 52px;
+  overflow: hidden;
+  position: relative;
+  box-shadow:
+    0 0 0 10px #1a0f35,
+    0 0 0 12px #2d1459,
+    0 40px 80px rgba(124,58,237,.35),
+    0 80px 160px rgba(0,0,0,.6);
+}
+.notch {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 126px; height: 36px;
+  background: #1a0f35;
+  border-radius: 0 0 22px 22px;
+  z-index: 100;
+}
+.notch::before {
+  content: '';
+  position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+  width: 12px; height: 12px;
+  background: #0f0a1e;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px #1a0f35;
+}
+
+/* ── Écrans ── */
+.scr { display: none; width: 100%; height: 100%; flex-direction: column; position: absolute; inset: 0; }
+.scr.on { display: flex; }
+
+/* ── Tokens de design ── */
+:root {
+  --p: #6d28d9;       /* primary */
+  --p2: #8b5cf6;      /* primary light */
+  --p3: #ede9fe;      /* primary soft */
+  --gold: #c9933a;    /* accent or */
+  --gold-s: #fef3c7;  /* accent or soft */
+  --bg: #f7f4f0;      /* fond chaud */
+  --bg2: #ffffff;
+  --ink: #1c1028;     /* texte foncé */
+  --ink2: #6b5f7a;    /* texte doux */
+  --border: #e8e0f5;
+  --red: #dc2626;
+  --green: #059669;
+  --orange: #d97706;
+}
+
+/* ── Typo ── */
+.t-hero { font-size: 26px; font-weight: 800; line-height: 1.2; color: var(--ink); }
+.t-title { font-size: 18px; font-weight: 800; color: var(--ink); }
+.t-sub { font-size: 12px; color: var(--ink2); margin-top: 2px; }
+.t-label { font-size: 11px; font-weight: 700; color: var(--ink2); margin-bottom: 5px; letter-spacing: .5px; text-transform: uppercase; }
+.t-body { font-size: 13px; color: var(--ink); line-height: 1.55; }
+.t-caption { font-size: 11px; color: var(--ink2); }
+
+/* ── Status bar ── */
+.sbar { height: 44px; display: flex; align-items: flex-end; padding: 0 28px 8px; justify-content: space-between; flex-shrink: 0; }
+.sbar-time { font-size: 15px; font-weight: 700; color: var(--ink); }
+.sbar-icons { display: flex; gap: 5px; align-items: center; }
+.sbar-icons svg { width: 14px; height: 14px; }
+
+/* ── Bottom nav ── */
+.bnav { height: 82px; background: var(--bg2); border-top: 1px solid var(--border); display: flex; align-items: flex-start; padding-top: 10px; flex-shrink: 0; }
+.bni { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
+.bni-dot { width: 5px; height: 5px; border-radius: 50%; background: transparent; transition: background .2s; }
+.bni.on .bni-dot { background: var(--p); }
+.bni-ico { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
+.bni-ico svg { width: 22px; height: 22px; stroke: var(--ink2); transition: stroke .2s; }
+.bni.on .bni-ico svg { stroke: var(--p); }
+.bni-lbl { font-size: 10px; font-weight: 600; color: var(--ink2); transition: color .2s; }
+.bni.on .bni-lbl { color: var(--p); }
+
+/* ── Scroll ── */
+.scroll { flex: 1; overflow-y: auto; }
+.scroll::-webkit-scrollbar { width: 0; }
+
+/* ── Inputs ── */
+.inp { width: 100%; background: #fff; border: 1.5px solid var(--border); border-radius: 14px; padding: 13px 16px; font-size: 14px; font-family: inherit; color: var(--ink); outline: none; transition: border .2s; }
+.inp:focus { border-color: var(--p2); }
+
+/* ── Buttons ── */
+.btn { width: 100%; padding: 15px; border-radius: 16px; font-size: 15px; font-weight: 700; border: none; cursor: pointer; font-family: inherit; transition: all .2s; }
+.btn-p { background: var(--p); color: #fff; }
+.btn-p:hover { background: #5b21b6; }
+.btn-ghost { background: transparent; color: var(--p); border: 2px solid var(--border); }
+.btn-s { padding: 9px 18px; border-radius: 12px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; font-family: inherit; width: auto; }
+.btn-sp { background: var(--p); color: #fff; }
+.btn-sg { background: #d1fae5; color: var(--green); }
+.btn-sr { background: #fee2e2; color: var(--red); }
+.btn-so { background: var(--p3); color: var(--p); }
+
+/* ── Card ── */
+.card { background: #fff; border-radius: 20px; padding: 18px; margin-bottom: 12px; border: 1px solid var(--border); }
+.card-flush { background: #fff; border-radius: 20px; overflow: hidden; margin-bottom: 12px; border: 1px solid var(--border); }
+
+/* ── Badge ── */
+.badge { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+.badge-p { background: var(--p3); color: var(--p); }
+.badge-g { background: #d1fae5; color: var(--green); }
+.badge-o { background: #fef3c7; color: var(--orange); }
+.badge-r { background: #fee2e2; color: var(--red); }
+
+/* ── Divider ── */
+.div { height: 1px; background: var(--border); margin: 14px 0; }
+
+/* ── Row/Col ── */
+.row { display: flex; align-items: center; gap: 12px; }
+.col { display: flex; flex-direction: column; flex: 1; }
+
+/* ── Avatar ── */
+.av { border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 800; }
+.av-lg { width: 52px; height: 52px; font-size: 20px; }
+.av-md { width: 40px; height: 40px; font-size: 16px; }
+.av-p { background: var(--p3); color: var(--p); }
+.av-gold { background: var(--gold-s); color: var(--gold); }
+
+/* ── Progress ── */
+.prog { height: 5px; background: var(--border); border-radius: 3px; margin-top: 8px; overflow: hidden; }
+.prog-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--p), var(--p2)); }
+
+/* ── Section header ── */
+.sh { display: flex; justify-content: space-between; align-items: center; margin: 20px 0 10px; }
+.sh-title { font-size: 15px; font-weight: 800; color: var(--ink); }
+.sh-link { font-size: 12px; font-weight: 700; color: var(--p); cursor: pointer; }
+
+/* ── Tag symptome ── */
+.stag { display: inline-flex; align-items: center; gap: 5px; background: #fff; border: 1.5px solid var(--border); border-radius: 24px; padding: 8px 14px; font-size: 12px; font-weight: 600; cursor: pointer; margin: 4px; transition: all .15s; color: var(--ink); }
+.stag.on { background: var(--p); color: #fff; border-color: var(--p); }
+
+/* ── Intensité ── */
+.ibar { display: flex; gap: 8px; }
+.idot { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; cursor: pointer; transition: all .15s; color: var(--ink2); }
+.idot.on { background: var(--p); color: #fff; border-color: var(--p); }
+
+/* ── Chat ── */
+.bubble { max-width: 72%; padding: 12px 16px; border-radius: 18px; font-size: 13px; line-height: 1.5; margin-bottom: 10px; }
+.bubble-bot { background: #fff; color: var(--ink); border-bottom-left-radius: 5px; border: 1px solid var(--border); }
+.bubble-user { background: var(--p); color: #fff; border-bottom-right-radius: 5px; margin-left: auto; }
+.chat-bottom { padding: 12px 16px 20px; background: #fff; border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: center; }
+.chat-inp { flex: 1; background: var(--bg); border: 1.5px solid var(--border); border-radius: 24px; padding: 11px 18px; font-size: 13px; font-family: inherit; outline: none; color: var(--ink); }
+.chat-send { width: 44px; height: 44px; border-radius: 50%; background: var(--p); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+/* ── Content card ── */
+.cc { display: flex; gap: 14px; align-items: center; padding: 14px; background: #fff; border-radius: 16px; margin-bottom: 10px; border: 1px solid var(--border); cursor: pointer; }
+.cc-thumb { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.cc-title { font-size: 13px; font-weight: 700; color: var(--ink); }
+.cc-meta { font-size: 11px; color: var(--ink2); margin-top: 2px; }
+.cc-dur { font-size: 11px; font-weight: 700; color: var(--p); margin-top: 5px; }
+
+/* ── RDV card ── */
+.rdv { background: #fff; border-radius: 16px; padding: 16px; margin-bottom: 10px; border: 1px solid var(--border); }
+.rdv-stripe { width: 4px; height: 100%; border-radius: 2px; background: var(--p); flex-shrink: 0; }
+.rdv-time { font-size: 11px; font-weight: 700; color: var(--p); letter-spacing: .5px; text-transform: uppercase; }
+.rdv-name { font-size: 14px; font-weight: 800; color: var(--ink); margin-top: 2px; }
+.rdv-place { font-size: 12px; color: var(--ink2); margin-top: 2px; }
+
+/* ── Stat card ── */
+.sc { background: #fff; border-radius: 18px; padding: 16px; border: 1px solid var(--border); }
+.sc-num { font-size: 30px; font-weight: 800; color: var(--p); line-height: 1; }
+.sc-lbl { font-size: 11px; color: var(--ink2); margin-top: 4px; font-weight: 500; }
+
+/* ── Tab ── */
+.tabs { display: flex; background: #ede9fe; border-radius: 14px; padding: 4px; margin-bottom: 16px; }
+.tab { flex: 1; padding: 9px; text-align: center; font-size: 12px; font-weight: 700; border-radius: 11px; cursor: pointer; color: var(--ink2); transition: all .2s; }
+.tab.on { background: #fff; color: var(--p); box-shadow: 0 2px 8px rgba(109,40,217,.12); }
+
+/* ── Alert ── */
+.alert { background: #fef3c7; border-radius: 14px; padding: 13px 15px; margin-bottom: 14px; display: flex; gap: 10px; }
+.alert-ico { font-size: 18px; flex-shrink: 0; }
+.alert-txt { font-size: 12px; color: #78350f; line-height: 1.5; }
+
+/* ── List item ── */
+.li { display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--border); }
+.li:last-child { border-bottom: none; }
+
+/* ─────────────────────────────────────────
+   SPLASH
+───────────────────────────────────────── */
+#s-splash { background: linear-gradient(160deg, #2e1065 0%, #4c1d95 40%, #7c3aed 75%, #c9933a 100%); }
+.splash-inner { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 36px; text-align: center; }
+.splash-logo { width: 88px; height: 88px; background: rgba(255,255,255,.12); backdrop-filter: blur(12px); border-radius: 28px; border: 1.5px solid rgba(255,255,255,.25); display: flex; align-items: center; justify-content: center; margin-bottom: 28px; }
+.splash-name { font-size: 32px; font-weight: 800; color: #fff; letter-spacing: 1px; }
+.splash-sub { font-size: 14px; color: rgba(255,255,255,.7); margin-top: 10px; line-height: 1.6; }
+.splash-actions { padding: 0 28px 52px; }
+.btn-white { background: #fff; color: var(--p); font-weight: 800; }
+.btn-white:hover { background: #ede9fe; }
+.btn-ghost-w { background: rgba(255,255,255,.12); color: #fff; border: 1.5px solid rgba(255,255,255,.3); backdrop-filter: blur(8px); }
+
+/* ─────────────────────────────────────────
+   HEADER gradient
+───────────────────────────────────────── */
+.gh { background: linear-gradient(135deg, #4c1d95, #7c3aed); padding: 16px 20px 32px; position: relative; overflow: hidden; flex-shrink: 0; }
+.gh::before { content: ''; position: absolute; top: -40px; right: -40px; width: 160px; height: 160px; border-radius: 50%; background: rgba(255,255,255,.06); }
+.gh::after { content: ''; position: absolute; bottom: -30px; left: -20px; width: 100px; height: 100px; border-radius: 50%; background: rgba(201,147,58,.12); }
+.gh-inner { position: relative; z-index: 1; }
+.gh h2 { font-size: 20px; font-weight: 800; color: #fff; }
+.gh p { font-size: 12px; color: rgba(255,255,255,.7); margin-top: 3px; }
+.gh-back { cursor: pointer; display: flex; align-items: center; gap: 6px; color: rgba(255,255,255,.8); font-size: 13px; font-weight: 600; margin-bottom: 14px; width: fit-content; }
+
+/* Overlap card */
+.overlap { margin-top: -20px; border-radius: 24px 24px 0 0; background: var(--bg); flex: 1; overflow-y: auto; padding: 20px 20px 100px; }
+.overlap::-webkit-scrollbar { width: 0; }
+
+</style>
+</head>
+<body>
+
+<p class="suite">YOONU MAKK — Prototype UI/UX</p>
+
+<div class="nav">
+  <span class="sep">Femme</span>
+  <button class="n on" onclick="go('splash',this)">Bienvenue</button>
+  <button class="n" onclick="go('login',this)">Connexion</button>
+  <button class="n" onclick="go('register',this)">Inscription</button>
+  <button class="n" onclick="go('home',this)">Accueil</button>
+  <button class="n" onclick="go('symptoms',this)">Symptômes</button>
+  <button class="n" onclick="go('history',this)">Historique</button>
+  <button class="n" onclick="go('chatbot',this)">Chatbot</button>
+  <button class="n" onclick="go('rdv',this)">Rendez-vous</button>
+  <button class="n" onclick="go('edu',this)">Éducation</button>
+  <span class="sep">|</span>
+  <span class="sep">Gynéco</span>
+  <button class="n" onclick="go('doc',this)">Accueil Gynéco</button>
+  <button class="n" onclick="go('patient',this)">Dossier Patiente</button>
+  <span class="sep">|</span>
+  <span class="sep">Admin</span>
+  <button class="n" onclick="go('admin',this)">Dashboard Admin</button>
+</div>
+
+<div class="phone">
+  <div class="notch"></div>
+
+  <!-- ═══════════════════════════════════════
+       SPLASH
+  ═══════════════════════════════════════ -->
+  <div class="scr on" id="s-splash">
+    <div class="sbar" style="background:transparent;">
+      <span class="sbar-time" style="color:#fff;">9:41</span>
+      <div class="sbar-icons">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M1 6s4-2 11-2 11 2 11 2"/><path d="M5 9.5s3-1.5 7-1.5 7 1.5 7 1.5"/><circle cx="12" cy="13" r="2" fill="#fff"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="2" y="7" width="16" height="10" rx="2"/><path d="M22 11v2"/></svg>
+      </div>
+    </div>
+    <div class="splash-inner">
+      <div class="splash-logo">
+        <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+          <path d="M22 8C22 8 10 14 10 24c0 6.627 5.373 12 12 12s12-5.373 12-12c0-10-12-16-12-16z" fill="rgba(255,255,255,0.9)"/>
+          <path d="M22 16c0 0-6 3.5-6 9 0 3.314 2.686 6 6 6s6-2.686 6-6c0-5.5-6-9-6-9z" fill="rgba(201,147,58,0.8)"/>
+        </svg>
+      </div>
+      <div class="splash-name">YOONU MAKK</div>
+      <div class="splash-sub">Votre accompagnement santé durant la ménopause. Simple. Humain. Adapté.</div>
+    </div>
+    <div class="splash-actions">
+      <button class="btn btn-white" onclick="go('login')">Connexion</button>
+      <button class="btn btn-ghost-w" style="margin-top:12px;" onclick="go('register')">Créer un compte</button>
+      <p style="text-align:center;font-size:11px;color:rgba(255,255,255,.5);margin-top:18px;">Disponible en Français · Wolof</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       LOGIN
+  ═══════════════════════════════════════ -->
+  <div class="scr" id="s-login">
+    <div class="sbar"><span class="sbar-time">9:41</span></div>
+    <div class="scroll" style="padding:24px 24px 32px;">
+      <div style="margin-bottom:32px;">
+        <div style="width:52px;height:52px;border-radius:16px;background:var(--p3);display:flex;align-items:center;justify-content:center;margin-bottom:20px;">
+          <svg width="26" height="26" viewBox="0 0 44 44" fill="none"><path d="M22 6C22 6 10 12 10 22c0 6.627 5.373 12 12 12s12-5.373 12-12c0-10-12-16-12-16z" fill="#7c3aed"/><path d="M22 14c0 0-6 3.5-6 9 0 3.314 2.686 6 6 6s6-2.686 6-6c0-5.5-6-9-6-9z" fill="#c9933a"/></svg>
+        </div>
+        <div class="t-hero">Bon retour<br>parmi nous 👋</div>
+        <div class="t-sub" style="margin-top:8px;">Connectez-vous pour continuer votre suivi</div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab on">Femme</div>
+        <div class="tab">Gynécologue</div>
+      </div>
+
+      <div class="t-label">Téléphone ou Email</div>
+      <input class="inp" style="margin-bottom:14px;" value="+221 77 123 45 67" placeholder="+221 77 000 00 00">
+
+      <div class="t-label">Mot de passe</div>
+      <input class="inp" style="margin-bottom:6px;" type="password" value="••••••••">
+      <div style="text-align:right;margin-bottom:22px;"><span style="font-size:12px;color:var(--p);font-weight:700;cursor:pointer;">Mot de passe oublié ?</span></div>
+
+      <button class="btn btn-p" onclick="go('home')">Se connecter</button>
+      <button class="btn btn-ghost" style="margin-top:10px;" onclick="go('register')">Créer un compte</button>
+      <p style="text-align:center;font-size:11px;color:var(--ink2);margin-top:20px;line-height:1.6;">En continuant, vous acceptez nos <span style="color:var(--p);font-weight:700;">conditions</span></p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       REGISTER
+  ═══════════════════════════════════════ -->
+  <div class="scr" id="s-register">
+    <div class="sbar"><span class="sbar-time">9:41</span></div>
+    <div class="scroll" style="padding:0 24px 32px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;cursor:pointer;" onclick="go('login')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        <span style="font-size:13px;font-weight:700;color:var(--ink);">Retour</span>
+      </div>
+      <div class="t-hero" style="margin-bottom:6px;">Créer<br>votre compte</div>
+      <div class="t-sub" style="margin-bottom:28px;">Rejoignez YOONU MAKK gratuitement</div>
+
+      <div class="t-label">Prénom</div>
+      <input class="inp" style="margin-bottom:14px;" value="Aïssatou" placeholder="Prénom">
+      <div class="t-label">Nom de famille</div>
+      <input class="inp" style="margin-bottom:14px;" value="Diallo" placeholder="Nom">
+      <div class="t-label">Téléphone</div>
+      <input class="inp" style="margin-bottom:14px;" value="+221 77 456 78 90" placeholder="+221 77 000 00 00">
+      <div class="t-label">Date de naissance</div>
+      <input class="inp" style="margin-bottom:14px;" type="date" value="1972-03-15">
+      <div class="t-label">Langue préférée</div>
+      <select class="inp" style="margin-bottom:14px;">
+        <option>Français</option>
+        <option>Wolof</option>
+        <option>Pulaar</option>
+      </select>
+      <div class="t-label">Mot de passe</div>
+      <input class="inp" style="margin-bottom:28px;" type="password" placeholder="Minimum 8 caractères">
+      <button class="btn btn-p" onclick="go('home')">Créer mon compte</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       HOME
+  ═══════════════════════════════════════ -->
+  <div class="scr" id="s-home">
+    <div class="gh" style="padding-top:50px;">
+      <div class="gh-inner">
+        <div class="row" style="justify-content:space-between;margin-bottom:20px;">
+          <div>
+            <div style="font-size:12px;color:rgba(255,255,255,.65);font-weight:500;">Bonjour,</div>
+            <div style="font-size:22px;font-weight:800;color:#fff;margin-top:2px;">Aïssatou</div>
+          </div>
+          <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,.12);border-radius:16px;padding:14px 16px;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);">
+          <div style="font-size:10px;color:rgba(255,255,255,.6);font-weight:700;letter-spacing:.5px;text-transform:uppercase;">Conseil du jour</div>
+          <div style="font-size:13px;color:#fff;margin-top:5px;line-height:1.5;">Boire 8 verres d'eau par jour peut réduire la fréquence des bouffées de chaleur.</div>
+        </div>
+      </div>
+    </div>
+    <div class="overlap">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;">
+        <div class="sc">
+          <div class="sc-num">12</div>
+          <div class="sc-lbl">Symptômes ce mois</div>
+          <div class="prog"><div class="prog-fill" style="width:60%"></div></div>
+        </div>
+        <div class="sc">
+          <div class="sc-num">3</div>
+          <div class="sc-lbl">RDV planifiés</div>
+          <div class="prog"><div class="prog-fill" style="width:30%"></div></div>
+        </div>
+      </div>
+
+      <div class="sh"><span class="sh-title">Actions rapides</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;">
+        <div onclick="go('symptoms')" style="background:linear-gradient(135deg,#4c1d95,#7c3aed);border-radius:20px;padding:18px 16px;cursor:pointer;">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" style="margin-bottom:12px;"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+          <div style="font-size:13px;font-weight:800;color:#fff;">Symptômes</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:2px;">Enregistrer</div>
+        </div>
+        <div onclick="go('chatbot')" style="background:linear-gradient(135deg,#c9933a,#d4a853);border-radius:20px;padding:18px 16px;cursor:pointer;">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" style="margin-bottom:12px;"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <div style="font-size:13px;font-weight:800;color:#fff;">Chatbot IA</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:2px;">Poser une question</div>
+        </div>
+        <div onclick="go('rdv')" style="background:#fff;border:1px solid var(--border);border-radius:20px;padding:18px 16px;cursor:pointer;">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2" style="margin-bottom:12px;"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          <div style="font-size:13px;font-weight:800;color:var(--ink);">Rendez-vous</div>
+          <div style="font-size:11px;color:var(--ink2);margin-top:2px;">Prendre RDV</div>
+        </div>
+        <div onclick="go('edu')" style="background:#fff;border:1px solid var(--border);border-radius:20px;padding:18px 16px;cursor:pointer;">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2" style="margin-bottom:12px;"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          <div style="font-size:13px;font-weight:800;color:var(--ink);">Éducation</div>
+          <div style="font-size:11px;color:var(--ink2);margin-top:2px;">Apprendre</div>
+        </div>
+      </div>
+
+      <div class="sh"><span class="sh-title">Prochain rendez-vous</span><span class="sh-link" onclick="go('rdv')">Voir tout</span></div>
+      <div class="rdv">
+        <div class="row" style="justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div class="rdv-time">Jeu. 2 Mai · 10h00</div>
+            <div class="rdv-name">Dr. Fatou Sow</div>
+            <div class="rdv-place">Gynécologue · Clinique Pasteur, Dakar</div>
+          </div>
+          <span class="badge badge-g">Confirmé</span>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:14px;">
+          <button class="btn-s btn-sp">Voir détails</button>
+          <button class="btn-s btn-so">Reporter</button>
+        </div>
+      </div>
+    </div>
+    <div class="bnav">
+      <div class="bni on" onclick="go('home',null,this)">
+        <div class="bni-dot"></div>
+        <div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg></div>
+        <span class="bni-lbl">Accueil</span>
+      </div>
+      <div class="bni" onclick="go('symptoms',null,this)">
+        <div class="bni-dot"></div>
+        <div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg></div>
+        <span class="bni-lbl">Symptômes</span>
+      </div>
+      <div class="bni" onclick="go('chatbot',null,this)">
+        <div class="bni-dot"></div>
+        <div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+        <span class="bni-lbl">IA</span>
+      </div>
+      <div class="bni" onclick="go('edu',null,this)">
+        <div class="bni-dot"></div>
+        <div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+        <span class="bni-lbl">Éducation</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SYMPTOMES
+  ═══════════════════════════════════════ -->
+  <div class="scr" id="s-symptoms">
+    <div class="gh" style="padding-top:50px;">
+      <div class="gh-inner">
+        <div class="gh-back" onclick="go('home')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> Retour
+        </div>
+        <div class="gh h2" style="font-size:20px;font-weight:800;color:#fff;">Mes Symptômes</div>
+        <div class="gh p" style="font-size:12px;color:rgba(255,255,255,.65);">Enregistrement du 27 Avril 2026</div>
+      </div>
+    </div>
+    <div class="overlap">
+      <div class="card" style="margin-bottom:14px;">
+        <div class="t-label" style="margin-bottom:10px;">Que ressentez-vous ?</div>
+        <div>
+          <span class="stag on" onclick="this.classList.toggle('on')">Bouffées de chaleur</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Troubles du sommeil</span>
+          <span class="stag on" onclick="this.classList.toggle('on')">Sueurs nocturnes</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Palpitations</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Anxiété</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Sautes d'humeur</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Douleurs articulaires</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Troubles de mémoire</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Fatigue intense</span>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:14px;">
+        <div class="t-label" style="margin-bottom:10px;">Intensité</div>
+        <div class="ibar">
+          <div class="idot" onclick="setI(1)">1</div>
+          <div class="idot" onclick="setI(2)">2</div>
+          <div class="idot on" onclick="setI(3)">3</div>
+          <div class="idot" onclick="setI(4)">4</div>
+          <div class="idot" onclick="setI(5)">5</div>
+        </div>
+        <div style="font-size:11px;color:var(--ink2);margin-top:8px;">1 = léger · 3 = modéré · 5 = très intense</div>
+      </div>
+
+      <div class="card" style="margin-bottom:14px;">
+        <div class="t-label" style="margin-bottom:8px;">Note personnelle</div>
+        <textarea class="inp" style="height:80px;resize:none;" placeholder="Comment vous sentez-vous...">Bouffées de chaleur surtout le matin, difficile au travail.</textarea>
+      </div>
+
+      <div class="card" style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border-color:var(--p3);margin-bottom:20px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <div style="width:28px;height:28px;background:var(--p);border-radius:8px;display:flex;align-items:center;justify-content:center;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </div>
+          <span style="font-size:12px;font-weight:800;color:var(--p);">Recommandation IA</span>
+        </div>
+        <div class="t-body" style="font-size:12px;">Portez des vêtements légers en coton et évitez le café le matin. Si l'intensité augmente, consultez votre gynécologue.</div>
+      </div>
+
+      <button class="btn btn-p" onclick="go('home')">Enregistrer les symptômes</button>
+    </div>
+    <div class="bnav">
+      <div class="bni" onclick="go('home',null,this)"><div class="bni-dot"></div><div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg></div><span class="bni-lbl">Accueil</span></div>
+      <div class="bni on" onclick="go('symptoms',null,this)"><div class="bni-dot"></div><div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg></div><span class="bni-lbl">Symptômes</span></div>
+      <div class="bni" onclick="go('chatbot',null,this)"><div class="bni-dot"></div><div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><span class="bni-lbl">IA</span></div>
+      <div class="bni" onclick="go('edu',null,this)"><div class="bni-dot"></div><div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div><span class="bni-lbl">Éducation</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       HISTORIQUE
+  ═══════════════════════════════════════ -->
+  <div class="scr" id="s-history">
+    <div class="gh" style="padding-top:50px;">
+      <div class="gh-inner">
+        <div class="gh-back" onclick="go('home')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> Retour</div>
+        <div style="font-size:20px;font-weight:800;color:#fff;">Historique</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.65);">30 derniers jours</div>
+      </div>
+    </div>
+    <div class="overlap">
+      <div class="card" style="margin-bottom:14px;">
+        <div class="t-label" style="margin-bottom:12px;">Fréquence des symptômes</div>
+        <div>
+          <div class="row" style="gap:10px;margin-bottom:10px;"><div style="width:110px;font-size:12px;color:var(--ink2);">Bouffées de chaleur</div><div style="flex:1;"><div class="prog"><div class="prog-fill" style="width:80%"></div></div></div><div style="font-size:12px;font-weight:800;color:var(--p);width:24px;text-align:right;">8×</div></div>
+          <div class="row" style="gap:10px;margin-bottom:10px;"><div style="width:110px;font-size:12px;color:var(--ink2);">Troubles sommeil</div><div style="flex:1;"><div class="prog"><div class="prog-fill" style="width:60%"></div></div></div><div style="font-size:12px;font-weight:800;color:var(--p);width:24px;text-align:right;">6×</div></div>
+          <div class="row" style="gap:10px;margin-bottom:10px;"><div style="width:110px;font-size:12px;color:var(--ink2);">Sueurs nocturnes</div><div style="flex:1;"><div class="prog"><div class="prog-fill" style="width:40%"></div></div></div><div style="font-size:12px;font-weight:800;color:var(--p);width:24px;text-align:right;">4×</div></div>
+          <div class="row" style="gap:10px;"><div style="width:110px;font-size:12px;color:var(--ink2);">Anxiété</div><div style="flex:1;"><div class="prog"><div class="prog-fill" style="width:20%"></div></div></div><div style="font-size:12px;font-weight:800;color:var(--p);width:24px;text-align:right;">2×</div></div>
+        </div>
+      </div>
+
+      <div class="sh"><span class="sh-title">Entrées récentes</span></div>
+      <div class="rdv" style="border-left:4px solid var(--p);">
+        <div class="rdv-time">Aujourd'hui · 08h30</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0;"><span class="badge badge-p">Bouffées de chaleur</span><span class="badge badge-p">Sueurs nocturnes</span></div>
+        <div class="t-caption">Intensité 3/5 · "Difficile le matin au travail"</div>
+      </div>
+      <div class="rdv" style="border-left:4px solid var(--gold);">
+        <div class="rdv-time" style="color:var(--gold);">Hier · 22h15</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0;"><span class="badge badge-o">Troubles du sommeil</span></div>
+        <div class="t-caption">Intensité 4/5 · "Impossible de dormir"</div>
+      </div>
+      <div class="rdv" style="border-left:4px solid #d1d5db;">
+        <div class="rdv-time" style="color:var(--ink2);">25 Avr · 14h00</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0;"><span class="badge badge-p">Palpitations</span><span class="badge badge-p">Anxiété</span></div>
+        <div class="t-caption">Intensité 2/5</div>
+      </div>
+    </div>
+    <div class="bnav">
+      <div class="bni" onclick="go('home',null,this)"><div class="bni-dot"></div><div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg></div><span class="bni-lbl">Accueil</span></div>
+      <div class="bni on"><div class="bni-dot"></div><div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg></div><span class="bni-lbl">Symptômes</span></div>
+      <div class="bni" onclick="go('chatbot',null,this)"><div class="bni-dot"></div><div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><span class="bni-lbl">IA</span></div>
+      <div class="bni" onclick="go('edu',null,this)"><div class="bni-dot"></div><div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div><span class="bni-lbl">Éducation</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CHATBOT
+  ═══════════════════════════════════════ -->
+  <div class="scr" id="s-chatbot">
+    <div class="gh" style="padding-top:50px;padding-bottom:18px;">
+      <div class="gh-inner">
+        <div class="gh-back" onclick="go('home')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> Retour</div>
+        <div class="row" style="gap:10px;">
+          <div style="width:40px;height:40px;background:rgba(255,255,255,.15);border-radius:12px;display:flex;align-items:center;justify-content:center;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </div>
+          <div>
+            <div style="font-size:16px;font-weight:800;color:#fff;">Assistant MAKK</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.6);">Toujours disponible · IA</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="scroll" id="chat-content" style="padding:16px;background:var(--bg);">
+      <div style="text-align:center;margin-bottom:16px;"><span style="font-size:10px;color:var(--ink2);background:var(--border);padding:4px 14px;border-radius:20px;font-weight:600;">Aujourd'hui</span></div>
+      <div class="bubble bubble-bot">Bonjour Aïssatou ! Je suis votre assistante santé MAKK. Posez-moi n'importe quelle question sur la ménopause.</div>
+      <div class="bubble bubble-user">Pourquoi j'ai des bouffées de chaleur la nuit ?</div>
+      <div class="bubble bubble-bot">Les bouffées nocturnes sont causées par les variations hormonales d'oestrogènes. Votre corps régule moins bien sa température. Conseils : pièce fraîche, vêtements en coton, éviter le café le soir. Si très fréquentes, consultez votre gynécologue.</div>
+      <div class="bubble bubble-user">C'est normal de se sentir triste ?</div>
+      <div class="bubble bubble-bot">Tout à fait normale. Les fluctuations hormonales affectent l'humeur. Parler à des proches aide beaucoup. Si la tristesse persiste, n'hésitez pas à consulter.</div>
+    </div>
+    <div class="chat-bottom">
+      <input class="chat-inp" id="cinput" placeholder="Posez votre question…" onkeypress="if(event.key==='Enter')send()">
+      <button class="chat-send" onclick="send()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       RDV
+  ═══════════════════════════════════════ -->
+  <div class="scr" id="s-rdv">
+    <div class="gh" style="padding-top:50px;">
+      <div class="gh-inner">
+        <div class="gh-back" onclick="go('home')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> Retour</div>
+        <div style="font-size:20px;font-weight:800;color:#fff;">Rendez-vous</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.65);">Gérez vos consultations</div>
+      </div>
+    </div>
+    <div class="overlap">
+      <div class="tabs"><div class="tab on">Mes RDV</div><div class="tab">Prendre RDV</div></div>
+
+      <div class="rdv" style="border-left:4px solid var(--green);">
+        <div class="row" style="justify-content:space-between;align-items:flex-start;">
+          <div><div class="rdv-time" style="color:var(--green);">Jeu. 2 Mai · 10h00</div><div class="rdv-name">Dr. Fatou Sow</div><div class="rdv-place">Gynécologue · Clinique Pasteur</div></div>
+          <span class="badge badge-g">Confirmé</span>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;"><button class="btn-s btn-sp">Détails</button><button class="btn-s btn-so">Reporter</button></div>
+      </div>
+
+      <div class="rdv" style="border-left:4px solid var(--orange);">
+        <div class="row" style="justify-content:space-between;align-items:flex-start;">
+          <div><div class="rdv-time" style="color:var(--orange);">Lun. 12 Mai · 15h30</div><div class="rdv-name">Dr. Aminata Diop</div><div class="rdv-place">Gynécologue · Hôpital Principal</div></div>
+          <span class="badge badge-o">En attente</span>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;"><button class="btn-s btn-sp">Détails</button><button class="btn-s btn-so">Reporter</button></div>
+      </div>
+
+      <div class="sh"><span class="sh-title">Gynécologues disponibles</span></div>
+
+      <div class="card">
+        <div class="row">
+          <div class="av av-lg av-p">FS</div>
+          <div class="col">
+            <div style="font-size:14px;font-weight:800;color:var(--ink);">Dr. Rokhaya Ndiaye</div>
+            <div class="t-caption">Polyclinique du Plateau · Dakar</div>
+            <span class="badge badge-g" style="margin-top:5px;">Disponible</span>
+          </div>
+          <button class="btn-s btn-sp">RDV</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="row">
+          <div class="av av-lg av-gold">MB</div>
+          <div class="col">
+            <div style="font-size:14px;font-weight:800;color:var(--ink);">Dr. Mariama Ba</div>
+            <div class="t-caption">CHU de Dakar</div>
+            <span class="badge badge-o" style="margin-top:5px;">Sous 48h</span>
+          </div>
+          <button class="btn-s btn-sp">RDV</button>
+        </div>
+      </div>
+    </div>
+    <div class="bnav">
+      <div class="bni" onclick="go('home',null,this)"><div class="bni-dot"></div><div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg></div><span class="bni-lbl">Accueil</span></div>
+      <div class="bni" onclick="go('symptoms',null,this)"><div class="bni-dot"></div><div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg></div><span class="bni-lbl">Symptômes</span></div>
+      <div class="bni" onclick="go('chatbot',null,this)"><div class="bni-dot"></div><div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><span class="bni-lbl">IA</span></div>
+      <div class="bni on"><div class="bni-dot"></div><div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div><span class="bni-lbl">RDV</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       EDUCATION
+  ═══════════════════════════════════════ -->
+  <div class="scr" id="s-edu">
+    <div class="gh" style="padding-top:50px;">
+      <div class="gh-inner">
+        <div class="gh-back" onclick="go('home')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> Retour</div>
+        <div style="font-size:20px;font-weight:800;color:#fff;">Espace Éducatif</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.65);">Apprenez à votre rythme</div>
+      </div>
+    </div>
+    <div class="overlap">
+      <div class="tabs"><div class="tab on">Vidéos</div><div class="tab">Audio</div><div class="tab">Articles</div></div>
+      <div class="cc"><div class="cc-thumb" style="background:linear-gradient(135deg,#4c1d95,#7c3aed);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><div><div class="cc-title">Comprendre la ménopause</div><div class="cc-meta">Dr. Aminata Diop · Santé féminine</div><div class="cc-dur">▶ 8 min 30</div></div></div>
+      <div class="cc"><div class="cc-thumb" style="background:linear-gradient(135deg,#059669,#34d399);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><div><div class="cc-title">Alimentation & ménopause</div><div class="cc-meta">Nutritionniste · Bien-être</div><div class="cc-dur">▶ 12 min 15</div></div></div>
+      <div class="cc"><div class="cc-thumb" style="background:linear-gradient(135deg,#c9933a,#d4a853);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><div><div class="cc-title">Gérer le stress · Podcast</div><div class="cc-meta">Psychologue · Santé mentale</div><div class="cc-dur">🎧 25 min</div></div></div>
+      <div class="cc"><div class="cc-thumb" style="background:linear-gradient(135deg,#0284c7,#38bdf8);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg></div><div><div class="cc-title">Exercices physiques adaptés</div><div class="cc-meta">Article · 5 min de lecture</div><div class="cc-dur">📖 Lire</div></div></div>
+      <div class="cc"><div class="cc-thumb" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><div><div class="cc-title">Ménopause en wolof</div><div class="cc-meta">Audio local · Wolof</div><div class="cc-dur">🎧 10 min</div></div></div>
+    </div>
+    <div class="bnav">
+      <div class="bni" onclick="go('home',null,this)"><div class="bni-dot"></div><div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg></div><span class="bni-lbl">Accueil</span></div>
+      <div class="bni" onclick="go('symptoms',null,this)"><div class="bni-dot"></div><div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg></div><span class="bni-lbl">Symptômes</span></div>
+      <div class="bni" onclick="go('chatbot',null,this)"><div class="bni-dot"></div><div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><span class="bni-lbl">IA</span></div>
+      <div class="bni on"><div class="bni-dot"></div><div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div><span class="bni-lbl">Éducation</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       DOCTOR HOME
+  ═══════════════════════════════════════ -->
+  <div class="scr" id="s-doc">
+    <div class="gh" style="padding-top:50px;background:linear-gradient(135deg,#1e3a5f,#1e40af);">
+      <div class="gh-inner">
+        <div class="row" style="justify-content:space-between;margin-bottom:16px;">
+          <div>
+            <div style="font-size:11px;color:rgba(255,255,255,.6);font-weight:700;letter-spacing:.5px;text-transform:uppercase;">Espace Médecin</div>
+            <div style="font-size:20px;font-weight:800;color:#fff;margin-top:4px;">Dr. Fatou Sow</div>
+            <span class="badge" style="background:rgba(255,255,255,.15);color:#fff;font-size:10px;margin-top:6px;">Gynécologue · Validée</span>
+          </div>
+          <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="overlap">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;">
+        <div class="sc"><div class="sc-num" style="color:#1e40af;">8</div><div class="sc-lbl">RDV aujourd'hui</div></div>
+        <div class="sc"><div class="sc-num" style="color:#1e40af;">24</div><div class="sc-lbl">Patientes actives</div></div>
+        <div class="sc"><div class="sc-num" style="color:var(--orange);">3</div><div class="sc-lbl">En attente</div></div>
+        <div class="sc"><div class="sc-num" style="color:var(--green);">5★</div><div class="sc-lbl">Évaluation</div></div>
+      </div>
+      <div class="sh"><span class="sh-title">RDV du jour</span></div>
+      <div class="rdv" style="border-left:4px solid #1e40af;">
+        <div class="row" style="justify-content:space-between;align-items:flex-start;">
+          <div><div class="rdv-time" style="color:#1e40af;">08h30</div><div class="rdv-name">Aïssatou Diallo</div><div class="rdv-place">Bouffées · Sueurs · Intensité 3/5</div></div>
+          <span class="badge badge-g">Confirmé</span>
+        </div>
+        <button class="btn-s btn-sp" style="margin-top:10px;background:#1e40af;" onclick="go('patient')">Voir dossier</button>
+      </div>
+      <div class="rdv" style="border-left:4px solid var(--orange);">
+        <div class="row" style="justify-content:space-between;align-items:flex-start;">
+          <div><div class="rdv-time" style="color:var(--orange);">10h00</div><div class="rdv-name">Mariama Sy</div><div class="rdv-place">Palpitations · Anxiété · Intensité 4/5</div></div>
+          <span class="badge badge-o">En attente</span>
+        </div>
+        <button class="btn-s" style="margin-top:10px;background:#dbeafe;color:#1e40af;border:none;padding:9px 18px;border-radius:12px;font-size:12px;font-weight:700;cursor:pointer;">Voir dossier</button>
+      </div>
+    </div>
+    <div class="bnav">
+      <div class="bni on" style="--p:#1e40af;"><div class="bni-dot" style="background:#1e40af;"></div><div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke="#1e40af"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg></div><span class="bni-lbl" style="color:#1e40af;">Accueil</span></div>
+      <div class="bni"><div class="bni-dot"></div><div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke="#6b7280"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div><span class="bni-lbl">Patientes</span></div>
+      <div class="bni"><div class="bni-dot"></div><div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke="#6b7280"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div><span class="bni-lbl">Agenda</span></div>
+      <div class="bni"><div class="bni-dot"></div><div class="bni-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke="#6b7280"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div><span class="bni-lbl">Profil</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PATIENT DETAIL
+  ═══════════════════════════════════════ -->
+  <div class="scr" id="s-patient">
+    <div class="gh" style="padding-top:50px;background:linear-gradient(135deg,#1e3a5f,#1e40af);">
+      <div class="gh-inner">
+        <div class="gh-back" onclick="go('doc')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> Retour</div>
+        <div style="font-size:20px;font-weight:800;color:#fff;">Dossier Patiente</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.65);">Aïssatou Diallo</div>
+      </div>
+    </div>
+    <div class="overlap">
+      <div class="card" style="margin-bottom:14px;">
+        <div class="row" style="margin-bottom:14px;">
+          <div class="av av-lg" style="width:54px;height:54px;background:#dbeafe;font-size:22px;font-weight:800;color:#1e40af;">AD</div>
+          <div class="col">
+            <div style="font-size:16px;font-weight:800;color:var(--ink);">Aïssatou Diallo</div>
+            <div class="t-caption">54 ans · Ménopause confirmée</div>
+            <div class="t-caption">+221 77 456 78 90</div>
+          </div>
+        </div>
+        <div class="div"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div><div style="font-size:10px;color:var(--ink2);font-weight:700;text-transform:uppercase;letter-spacing:.4px;">Dernière règle</div><div style="font-size:13px;font-weight:800;color:var(--ink);margin-top:2px;">Janv. 2024</div></div>
+          <div><div style="font-size:10px;color:var(--ink2);font-weight:700;text-transform:uppercase;letter-spacing:.4px;">Suivi depuis</div><div style="font-size:13px;font-weight:800;color:var(--ink);margin-top:2px;">Mars 2026</div></div>
+          <div><div style="font-size:10px;color:var(--ink2);font-weight:700;text-transform:uppercase;letter-spacing:.4px;">Symptômes</div><div style="font-size:13px;font-weight:800;color:var(--ink);margin-top:2px;">12 ce mois</div></div>
+          <div><div style="font-size:10px;color:var(--ink2);font-weight:700;text-transform:uppercase;letter-spacing:.4px;">Consultations</div><div style="font-size:13px;font-weight:800;color:var(--ink);margin-top:2px;">4 au total</div></div>
+        </div>
+      </div>
+
+      <div class="sh"><span class="sh-title">Symptômes récents</span></div>
+      <div class="card" style="margin-bottom:14px;">
+        <div class="row" style="gap:10px;margin-bottom:10px;"><div style="width:100px;font-size:12px;color:var(--ink2);">Bouffées</div><div style="flex:1;"><div class="prog"><div class="prog-fill" style="width:80%;background:linear-gradient(90deg,#dc2626,#f87171);"></div></div></div><span class="badge badge-r">Élevé</span></div>
+        <div class="row" style="gap:10px;margin-bottom:10px;"><div style="width:100px;font-size:12px;color:var(--ink2);">Sommeil</div><div style="flex:1;"><div class="prog"><div class="prog-fill" style="width:60%;background:linear-gradient(90deg,#d97706,#fbbf24);"></div></div></div><span class="badge badge-o">Modéré</span></div>
+        <div class="row" style="gap:10px;"><div style="width:100px;font-size:12px;color:var(--ink2);">Anxiété</div><div style="flex:1;"><div class="prog"><div class="prog-fill" style="width:25%;background:linear-gradient(90deg,#059669,#34d399);"></div></div></div><span class="badge badge-g">Faible</span></div>
+      </div>
+
+      <div class="sh"><span class="sh-title">Note médicale</span></div>
+      <div class="card">
+        <textarea class="inp" style="height:100px;resize:none;font-size:13px;">Patiente en début de ménopause. Symptômes vasomoteurs prédominants. Recommandation : phytothérapie + exercice léger. Réévaluation dans 1 mois.</textarea>
+        <button class="btn btn-p" style="margin-top:12px;background:#1e40af;">Enregistrer la note</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       ADMIN
+  ═══════════════════════════════════════ -->
+  <div class="scr" id="s-admin">
+    <div class="gh" style="padding-top:50px;background:linear-gradient(135deg,#111827,#1f2937);">
+      <div class="gh-inner">
+        <div class="row" style="justify-content:space-between;">
+          <div>
+            <div style="font-size:11px;color:rgba(255,255,255,.5);font-weight:700;letter-spacing:.5px;text-transform:uppercase;">Administration</div>
+            <div style="font-size:20px;font-weight:800;color:#fff;margin-top:4px;">Dashboard</div>
+          </div>
+          <div style="width:40px;height:40px;background:rgba(255,255,255,.08);border-radius:12px;display:flex;align-items:center;justify-content:center;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="overlap">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;">
+        <div class="sc"><div class="sc-num">156</div><div class="sc-lbl">Utilisatrices</div></div>
+        <div class="sc"><div class="sc-num" style="color:var(--green);">12</div><div class="sc-lbl">Gynécologues</div></div>
+        <div class="sc"><div class="sc-num" style="color:var(--orange);">4</div><div class="sc-lbl">En attente</div></div>
+        <div class="sc"><div class="sc-num" style="color:var(--gold);">28</div><div class="sc-lbl">Contenus</div></div>
+      </div>
+
+      <div class="sh"><span class="sh-title">Demandes d'adhésion</span><span class="badge badge-o">4 en attente</span></div>
+      <div class="card" style="margin-bottom:10px;">
+        <div class="row" style="margin-bottom:12px;">
+          <div class="av av-lg av-p">BD</div>
+          <div class="col">
+            <div style="font-size:14px;font-weight:800;color:var(--ink);">Dr. Binta Diallo</div>
+            <div class="t-caption">CHU de Saint-Louis · Dossier complet</div>
+            <span class="badge badge-o" style="margin-top:5px;">En attente</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-s btn-sg">Valider</button>
+          <button class="btn-s btn-sr">Refuser</button>
+          <button class="btn-s btn-so">Dossier</button>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:10px;">
+        <div class="row" style="margin-bottom:12px;">
+          <div class="av av-lg av-gold">MS</div>
+          <div class="col">
+            <div style="font-size:14px;font-weight:800;color:var(--ink);">Dr. Moussa Sarr</div>
+            <div class="t-caption">Clinique Madeleine · Dossier complet</div>
+            <span class="badge badge-o" style="margin-top:5px;">En attente</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-s btn-sg">Valider</button>
+          <button class="btn-s btn-sr">Refuser</button>
+          <button class="btn-s btn-so">Dossier</button>
+        </div>
+      </div>
+
+      <div class="sh"><span class="sh-title">Contenus récents</span></div>
+      <div class="card">
+        <div class="li"><div class="av av-md" style="background:#d1fae5;color:var(--green);">▶</div><div class="col"><div style="font-size:13px;font-weight:700;">Comprendre la ménopause</div><div class="t-caption">Vidéo · Ajouté hier</div></div><span class="badge badge-g">Publié</span></div>
+        <div class="li"><div class="av av-md" style="background:#fee2e2;color:var(--red);">📄</div><div class="col"><div style="font-size:13px;font-weight:700;">Exercices recommandés</div><div class="t-caption">Article · En révision</div></div><span class="badge badge-o">Révision</span></div>
+        <div class="li"><div class="av av-md" style="background:var(--p3);color:var(--p);">🎧</div><div class="col"><div style="font-size:13px;font-weight:700;">Audio wolof - Ménopause</div><div class="t-caption">Audio · Nouveau</div></div><span class="badge badge-o">Révision</span></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+
+<script>
+const map = {
+  splash:'s-splash', login:'s-login', register:'s-register',
+  home:'s-home', symptoms:'s-symptoms', history:'s-history',
+  chatbot:'s-chatbot', rdv:'s-rdv', edu:'s-edu',
+  doc:'s-doc', patient:'s-patient', admin:'s-admin'
+};
+
+function go(id, btn, bniEl) {
+  Object.values(map).forEach(s => {
+    const el = document.getElementById(s);
+    if(el) el.classList.remove('on');
+  });
+  const target = document.getElementById(map[id] || 's-'+id);
+  if(target) target.classList.add('on');
+  document.querySelectorAll('.n').forEach(b => b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+}
+
+function setI(val) {
+  document.querySelectorAll('.idot').forEach((d,i) => d.classList.toggle('on', i < val));
+}
+
+function send() {
+  const inp = document.getElementById('cinput');
+  const box = document.getElementById('chat-content');
+  const txt = inp.value.trim();
+  if(!txt) return;
+  const u = document.createElement('div');
+  u.className = 'bubble bubble-user';
+  u.textContent = txt;
+  box.appendChild(u);
+  inp.value = '';
+  box.scrollTop = box.scrollHeight;
+  setTimeout(() => {
+    const b = document.createElement('div');
+    b.className = 'bubble bubble-bot';
+    b.textContent = "Je comprends votre préoccupation. Je vous conseille d'en parler à votre gynécologue lors de votre prochain rendez-vous. En attendant, reposez-vous et hydratez-vous bien.";
+    box.appendChild(b);
+    box.scrollTop = box.scrollHeight;
+  }, 700);
+}
+
+document.getElementById('cinput').addEventListener('keypress', e => { if(e.key==='Enter') send(); });
+</script>
+</body>
+</html>
